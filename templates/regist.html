@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>用户注册</title>
+    <link rel="stylesheet" href="/static/css/bootstrap.css">
+    <link rel="stylesheet" href="/static/css/bootstrap-theme.css">
+    <script src="/static/js/bootstrap.min.js"></script>
+    <script src="/static/js/jquery.min.js"></script>
+    <style>
+        #body{
+            width: 85%;
+            height: 500px;
+            margin: 50px auto;
+{#            background-color: rgba(211, 211, 211, 0.3);#}
+{#            border: 1px solid lightgrey;#}
+        }
+
+        #left{
+            float: left;
+            width: 30%;
+            height: 100%;
+            background-color: rgba(178, 233, 217, 0.29);
+            border: 1px solid gainsboro;
+            border-radius: 7px;
+            box-shadow: 3px 3px 5px #bbbbbb;
+        }
+
+        #right{
+            float: left;
+            width: 68%;
+            height: 100%;
+            margin-right: 10px;
+            border: 1px solid #b4b8dc;
+            border-radius: 7px;
+            box-shadow: 2px 2px 2px  #bbbbbb;
+        }
+
+        .error{
+            display: none;
+            color: red;
+        }
+    </style>
+</head>
+<body>
+
+<div id="body">
+    <div id="right">
+        <img src="/static/images/IMG_9675.JPG" width="100%" height="100%"
+             style="border-radius: 7px">
+    </div>
+    <div id="left">
+        {% if opt == 1 %}
+            <h3 align="center">用 户 注 册</h3>
+            <form method="post" action="/user/regist" class="form-horizontal" style="width: 60%;margin: auto">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="username">用户名</label>
+                    <input class="form-control" id="username" name="username">
+                    <span class="error">用户名不能为空</span>
+                </div>
+                <div class="form-group">
+                    <label for="phone">手机号</label>
+                    <input class="form-control" id="phone" name="phone">
+                    <span class="error">请输入11位手机号</span>
+                </div>
+                <div class="form-group">
+                    <label for="passwd">密码</label>
+                    <input class="form-control" type="password" id="passwd" name="passwd">
+                    <span class="error">密码不能为空</span>
+                </div>
+                <div class="form-group">
+                    <label>上传头像</label><br>
+                    <img class="btn" id="preImg" alt="添加图片" width="80"
+                         height="60" style="line-height: 40px;border: 1px dashed gray" onclick="file.click()">
+                    <input type="hidden" name="head_path"><span class="error">请上传头像</span>
+                </div>
+                <div class="form-group">
+                    <button type="button" class="btn btn-success"
+                            style="width: 80px" onclick="submitJudge()">注册</button>
+                </div>
+            </form>
+            <div  style="width:68%;margin: auto">
+
+                <div class="form-group">
+                    <label>已有账号</label>
+                    <a href="/user/login">立即登录</a>
+                </div>
+            </div>
+
+        <input
+               style="display: none"
+               onchange="uploadImg(this.files[0])"
+               type="file" id="file">
+        {% else %}
+            <h3 align="center">用 户 登 录</h3>
+            <form method="post" action="/user/login" class="form-horizontal" style="width: 60%;margin: auto">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="username">用户名</label>
+                    <input class="form-control" id="username" name="name" value="{{ name }}">
+                    <span class="error">用户名不能为空</span>
+                </div>
+                <div class="form-group">
+                    <label for="passwd">密码</label>
+                    <input class="form-control" type="password" id="passwd" name="passwd" value="{{ passwd }}">
+                    <span class="error">密码不能为空</span>
+                </div>
+                <div class="form-group">
+                    <label for="vcode">验证码</label>
+                    <input class="form-control" id="vcode" name="vcode" placeholder="{{ error_msg }}">
+                    <span class="error">验证码不能为空</span>
+                </div>
+                <div style="width:80%;">
+                    <div class="form-group">
+                        <img src="/user/vcode" width="120"
+                         height="35" id="img">
+                        <br/>
+                        <a style="cursor: pointer;text-decoration: none;"
+                           onclick="flush(img)" class="btn-sm btn-primary">
+                            <span class="glyphicon glyphicon-repeat">换一换</span></a>
+                    </div>
+                </div>
+            <div class="form-group" style="margin-top: 35px">
+                    <button type="button" class="btn btn-success"
+                            style="width: 80px" onclick="submitJudge()">登录</button><br/>
+                <span style="color: red;font-size: 14px">{{ dl_msg }}</span>
+                </div>
+            </form>
+
+            <div style="width:68%;margin: auto">
+
+                <div class="form-group">
+                    <label>还没有账号?</label>
+                    <a href="/user/regist">立即注册</a>
+                </div>
+            </div>
+        {% endif %}
+
+    </div>
+
+</div>
+
+<script>
+    function flush(img) {
+        img.src = '/user/vcode?tm='+Math.random();
+    }
+
+    function uploadImg(file) {
+        console.log(file);
+        var xhr = new XMLHttpRequest();
+        xhr.open('post','/user/upload',true);
+        xhr.onload = function () {
+            var data = JSON.parse(xhr.responseText);
+            console.log(data.path);
+            document.getElementsByName('head_path')[0].value = data.path;
+            document.getElementById('preImg').src = '/static/head/'+data.path
+        };
+        var formdata = new FormData;
+        formdata.append('photo',file);
+        formdata.append('csrfmiddlewaretoken',
+            document.getElementsByName('csrfmiddlewaretoken')[0].value);
+        xhr.send(formdata);
+    }
+
+{#    function submitJudge(num) {#}
+{#        var ipts = document.getElementsByTagName('input');#}
+{#        var n = 0;#}
+{#        console.log(ipts);#}
+{#        for(var i in ipts){#}
+{#            var ipt = ipts[i];#}
+{#            console.log(ipt);#}
+{#            if(ipt.value == ""){#}
+{#                ipt.placeholder = "信息不能为空";#}
+{#                n ++;#}
+{#            }#}
+{#        }#}
+{#        console.log(n);#}
+{#        if(num == '1'){#}
+{#            if (n == 1) {#}
+{#                document.forms[0].submit();#}
+{#            }#}
+{#        }else {#}
+{#            if (n == 0) {#}
+{#                document.forms[0].submit();#}
+{#            }#}
+{#        }#}
+{##}
+{#    }#}
+</script>
+<script src="/static/js/regist.js"></script>
+</body>
+</html>

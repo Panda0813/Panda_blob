@@ -1,0 +1,18 @@
+{% extends 'home.html' %}
+{% block title %}
+信息提示页面
+{% endblock %}
+{% block content %}
+<div style="width: 60%;margin:80px auto;">
+<h1 style="color: #31b0d5">{{ save_msg }}</h1>
+</div>
+{% endblock %}
+{% block expscript %}
+<script>
+$.function(
+    setTimeout(function () {
+        window.open('/user',target='_self')
+    },1500)
+)
+</script>
+{% endblock %}

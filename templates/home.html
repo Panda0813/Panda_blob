@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}
+        Panda博客-带给你想要的精彩
+    {% endblock %}</title>
+    <link rel="stylesheet" href="/static/css/bootstrap.css">
+    <link rel="stylesheet" href="/static/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/css/swiper.min.css">
+    <script src="/static/js/jquery.min.js"></script>
+    <script src="/static/js/bootstrap.min.js"></script>
+    <script src="/static/js/swiper.min.js"></script>
+    <script src="/static/tiny_mce/tiny_mce.js"></script>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+        }
+
+        #title{
+            padding: 15px;
+            background-color: white;
+            font-size: 16px;
+            box-shadow: 2px 2px 0 rgba(235,235,235,0.88);
+        }
+
+        #title .col-md-2 a{
+            font-size: 16px;
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        #title a{
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .row a:hover{
+            color: red;
+        }
+
+        .headphoto{
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            border: 2px solid #d1d1d1;
+        }
+
+        #menu{
+            float: left;
+            margin: 15px 20px 0 70px ;
+        }
+        #menu .col-md-2{
+            width: 100px;
+            float: none;
+            padding: 5px;
+            margin: 1px 0 1px 0;
+            text-align: center;
+            font-size: 16px;
+        }
+
+        #menu .col-md-2:hover{
+            background-color: rgba(49, 176, 213, 0.75);
+        }
+
+        #mm{
+            background-color: white;
+            width: 100px;
+            border: 1px solid white;
+        }
+
+
+        #menu a{
+            color: #6a6a6a;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        #content{
+            margin: 15px 20px 0 0;
+            float: left;
+            width: 60%;
+            background-color: white;
+{#            border: 1px solid black;#}
+{#            height: 500px;#}
+            overflow: auto;
+        }
+
+        #right{
+            margin: 15px 20px 0 0;
+            float: left;
+            width: 20%;
+            background-color: white;
+            overflow: auto;
+            padding: 2px;
+            border-radius: 7px;
+            border: 1.5px solid lightgrey;
+            box-shadow: 2px 2px 0 rgba(235,235,235,0.88);
+        }
+
+
+    </style>
+    {% block extCss %}
+
+    {% endblock %}
+</head>
+<body style="background-color:rgba(209,209,209,0.24);">
+<div id="title">
+<div id="row" class="row" style="line-height: 30px;height: 30px">
+    {% block header %}
+        <div class="col-md-2">
+        <strong style="font-size: 24px"><em>Panda博客</em></strong>
+        </div>
+        <div class="col-md-2">
+        <a href="/user">首页<span></span></a>
+        </div>
+        <div class="col-md-2"><a href="/user/blob">所有博客</a><span></span></div>
+        <div class="col-md-2">
+            <a href="/user/addblob"><span class="glyphicon glyphicon-pencil"></span>&nbsp;发表博客</a>
+            <span></span>
+        </div>
+        {% if user.name %}
+            <div class="col-md-1">
+                <a style="text-decoration: none" id="username">{{ user.name }}</a><span></span></div>
+            <div class="col-md-1" style="padding-top:-5px;margin: 0">
+                <img id="userphoto" src="/static/head/{{ user.image }}" class="headphoto">
+            </div>
+            <div class="col-md-1">
+                <a href="/user/blob?a=1">我的博客</a>
+            <span></span>
+            </div>
+            <div class="col-md-1">
+                <a href="/user/logout">退出</a>
+            <span></span>
+            </div>
+        {% else %}
+            <div class="col-md-2"><a href="/user/login">登录</a></div>
+            <div class="col-md-2">
+                <a href="/user/regist">注册</a>
+            </div>
+        {% endif %}
+    {% endblock %}
+</div>
+</div>
+<div id="body">
+    <div id="menu">
+        {% block menu %}
+            <div id="mm">
+            <div class="col-md-2" style="margin-top: 5px">
+                <a>推 荐</a>
+            </div>
+            <div class="col-md-2">
+                <a>美 食</a>
+            </div>
+            <div class="col-md-2">
+                <a>科 技</a>
+            </div>
+            <div class="col-md-2">
+                <a>教 育</a>
+            </div>
+            <div class="col-md-2">
+                <a>娱 乐</a>
+            </div>
+            <div class="col-md-2">
+                <a>财 经</a>
+            </div>
+            <div class="col-md-2">
+                <a>影 视</a>
+            </div>
+            <div class="col-md-2" style="margin-bottom: 5px">
+                <a>体 育</a>
+            </div>
+            </div>
+        {% endblock %}
+
+    </div>
+    <div id="content">
+        {% block content %}
+            <div style="padding: 5px;">
+            <div style="float: left">
+            <img src="/static/images/IMG_1875.JPG" width="450" height="310">
+            </div>
+            <div style="float: left;margin-left: 10px;padding: 5px;">
+                <h4  style="font-weight: bolder;padding: 0 0 12px 5px">热门文章</h4>
+                {% for user in users %}
+                    {% if forloop.counter <= 2 %}
+                        {% for blob in user.blob_set.all %}
+                        {% if forloop.counter == 1 %}
+                            <div style="font-size: 14px;color: gray">
+                            <span style="font-size: 16px;font-weight: bolder;color: black">
+                                <a href="/user/show/{{ blob.id }}">{{ blob.title }}</a></span>
+                            <span style="padding-left: 20px">{{ blob.type_name }}</span><br>
+                            <span>{{ blob.publish_time }}</span>
+                            <span style="position: absolute;right: 30%">浏览量: {{ blob.cnt }}</span>
+                            <hr style="color: lightgrey">
+                            </div>
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                {% endfor %}
+            </div>
+            </div>
+        {% endblock %}
+
+    </div>
+    <div id="right">
+        {% block right %}
+        <div style="padding: 10px">
+        <h4  style="font-weight: bolder;padding: 0 0 12px 5px;">推荐博主</h4>
+        {% for user in users %}
+            {% if forloop.counter <= 3 %}
+                <div style="margin-bottom: 10px">
+            <img src="/static/head/{{ user.image }}"
+                 style="height: 40px;width: 40px;border-radius: 50%;border: 2px solid #d1d1d1;">
+            <span style="padding-left: 20px">
+                <a href="/user/blob?user_id={{ user.id }}">{{ user.name }}</a></span>
+            </div>
+            {% endif %}
+        {% endfor %}
+        </div>
+        {% endblock %}
+    </div>
+</div>
+<div id="foot">
+{% block foot %}
+
+{% endblock %}
+{% block expscript %}
+
+{% endblock %}
+</div>
+</body>
+</html>

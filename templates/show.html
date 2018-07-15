@@ -1,0 +1,75 @@
+{% extends 'home.html' %}
+{% block content %}
+<div style="padding: 10px">
+<div>
+<h2>{{ blob.title }}</h2>
+<span>类型: {{ blob.type_name }}</span><br>
+<span>发表时间: {{ blob.publish_time }}</span>
+<span style="position: absolute;right: 30%">浏览量: {{ blob.cnt }}</span>
+<hr style="color: lightgrey">
+</div>
+<div>
+    <h4 style="font-weight: bolder">概要:{{ blob.summary }}</h4>
+    {{ blob.content|safe }}
+</div>
+<hr style="color: lightgrey">
+<div>
+    <div style="width: 100%;height:38px;
+    background-color:rgba(99,222,135,0.62);padding: 5px">
+        <span style="font-weight: bolder;font-size: 18px">回帖</span>
+        <button style="position: absolute;right: 27%;height: 28px;"
+                id="save" class="btn-sm btn-primary">提交</button>
+    </div>
+    <form>
+        <input type="hidden" name="blob_id" value="{{ blob.id }}">
+        <textarea name="content"></textarea>
+    </form>
+</div>
+</div>
+
+{% endblock %}
+
+
+{% block right %}
+<div style="padding: 10px;">
+<div>
+    <h4  style="font-weight: bolder;padding: 0 0 12px 5px;">
+        <span class="glyphicon glyphicon-user"></span> 作者信息</h4>
+    <img src="/static/head/{{ blob.user.image }}"
+         style="height: 50px;width: 50px;border-radius: 50%;border: 2px solid #d1d1d1;">
+    <span style="padding-left: 10px">{{ blob.user.name }}</span>
+    <span style="padding-left: 10px">发帖数: {{ blob.user.blob_set.all.count }}</span>
+</div>
+<hr>
+<div>
+    <p  style="font-weight: bolder;padding-bottom: 12px;font-size: 16px">回帖记录</p>
+</div>
+<div style="height: auto">
+<iframe src="/user/allreply/{{ blob.id }}/1"
+        frameborder="0" width="100%" scrolling="no" id="frame"
+        onload="changeHeight()"></iframe>
+
+</div>
+</div>
+
+{# 模态框 #}
+<div class="modal" id="replayModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+<div class="modal-dialog" role="document">
+<div class="modal-content" style="margin: 0 20px">
+  <div class="modal-body">
+    <h4><span id="replayMsg"></span></h4>
+  </div>
+  <div class="modal-footer">
+    <button type="button" id="close" class="btn btn-sm btn-default" data-dismiss="modal">关闭</button>
+      <button id="ok"  type="button" class="btn btn-sm btn-default">登录</button>
+  </div>
+</div>
+</div>
+</div>
+
+
+{% endblock %}
+
+{% block expscript %}
+<script src="/static/js/show.js"></script>
+{% endblock %}
